@@ -1,0 +1,162 @@
+﻿@model ChatApp.Models.UserModel
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+<br /><br /><br /><br />
+<div class="jumbotron defaultPanel">
+    <div class="row">
+        <div class="col-sm-4 text-center">
+            <div class="show-image">
+                <img src="@Model.ProfilePicture" class="profilePicture imgUserProfilePicture" />
+                @if (Model.UserID == MySession.Current.UserID)
+                {
+                    <form id="formUpdateProfilePicture" method="post" enctype="multipart/form-data" action="/User/UpdateProfilePicture">
+                        <input type="hidden" name="userID" value="@Model.UserID" />
+                        <label class="btn btn-primary btn-file img-corner" title="Update profile picture">
+                            <i class="fa fa-pencil"></i>
+                            <input type="file" name="profilePicture" id="imgProfilePicture" style="display: none;">
+                        </label>
+                        <i class="fa fa-spinner fa-spin fa-2x fa-fw img-uploading"></i>
+                    </form>
+                }
+            </div>
+            <div style="clear:both"></div>
+            <input id="hdfProfileUserID" type="hidden" value="@Model.UserID" />
+            <div style="margin-top:10px;">
+                @if (Model.UserID != MySession.Current.UserID)
+                {
+                    if (!string.IsNullOrEmpty(Model.FriendRequestStatus))
+                    {
+                        if (Model.FriendRequestorID == MySession.Current.UserID)
+                        {
+                            if (Model.FriendRequestStatus == "Sent")
+                            {
+                                <br />
+                                <input type="button" class="btn btn-info disabled btn-sm" value="Request Sent" />
+                                <br />
+                            }
+                            else
+                            {
+                                <br />
+                                <div class="btn-group">
+                                    <a aria-expanded="false" href="#" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        Friend
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="btn btn-info btn-xs btn-unfriend" data-friend-mapping-id="@Model.FriendMappingID" href="javascript:;">Unfriend</a></li>
+                                    </ul>
+                                </div>
+                                <br />
+                            }
+                        }
+                        else
+                        {
+                            if (Model.FriendRequestStatus == "Sent")
+                            {
+                                <br />
+                                <span>
+                                    <input type="button" class="btn btn-success btn-sm request-response" data-user-id="@Model.UserID" data-value="Accepted" value="Accept" />
+                                    <input type="button" class="btn btn-danger btn-sm request-response" data-user-id="@Model.UserID" data-value="Rejected" value="Reject" />
+                                </span>
+                                <br />
+                            }
+                            else
+                            {
+                                <br />
+                                <div class="btn-group">
+                                    <a aria-expanded="false" href="#" class="btn btn-info btn-sm dropdown-toggle" data-toggle="dropdown">
+                                        Friend
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="btn btn-info btn-xs btn-unfriend" data-friend-mapping-id="@Model.FriendMappingID" href="javascript:;">Unfriend</a></li>
+                                    </ul>
+                                </div>
+                                <br />
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <br />
+                        <input type="button" class="btn btn-info btn-sm sendRequest" data-user-id="@Model.UserID" value="Request to be friends" />
+                        <br />
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <fieldset>
+                <h3>
+                    @Model.Name
+                    @if (Model.UserID == MySession.Current.UserID)
+                    {
+                        <a class="btn btn-link" href="/User/EditProfile" title="Update profile"><i class="fa fa-pencil"></i></a>
+                    }
+                </h3>
+                <span>@Model.Gender, @Model.Age</span>
+
+            </fieldset>
+        </div>
+    </div>
+    <br />
+    <div class="row user-bio">
+        <p>
+            @Model.Bio
+        </p>
+    </div>
+</div>
+<script type="text/javascript">
+    $('.btn-unfriend').click(function () {
+        var friendMappingID = $(this).attr('data-friend-mapping-id');
+        unfriendUser(friendMappingID);
+        $(this).parent().parent().parent().html('<input type="button" class="btn btn-info btn-sm sendRequest" data-user-id="@Model.UserID" value="Request to be friends" />');
+    })
+</script>
+<script src="~/Scripts/jquery.form.js"></script>
+<script type="text/javascript">
+    (function () {
+        var selectedFiles;
+        $('#formUpdateProfilePicture').ajaxForm({
+            datatype: "json",
+            contentType: "application/json; charset=utf-8",
+            beforeSend: function (xhr) {
+                $(".img-uploading").animate({ "opacity": "show" }, 500);
+            },
+            success: function (data) {
+                $('#imgProfilePicture').val('');
+                $(".img-uploading").animate({ "opacity": "hide" }, 500);
+                if (data.success == true) {
+                    if (data.filePath != null && data.filePath != '') {
+                        $('.imgUserProfilePicture').fadeOut(500, function () {
+                            $('.imgUserProfilePicture').attr("src", data.filePath);
+                            $('.imgUserProfilePicture').fadeIn(500);
+                        });
+                    }
+                }
+                else {
+                    alert("Profile picture is not saving due to some errors. Please try again.");
+                }
+            },
+            complete: function (xhr) {
+                return false;
+            },
+            error: function (ts) { console.log(ts.responseText) }
+        });
+    })();
+    $("#imgProfilePicture").change(function () {
+        if ($(this).val() != null && $(this).val() != "") {
+            var fileExtension = ['jpeg', 'jpg', 'png'];
+            if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                alert('Please select valid image type. Only .jpg, .jpeg, .png are allowed.');
+                return false;
+            }
+        }
+        readURL(this);
+    });
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            $('#formUpdateProfilePicture').submit();
+        }
+    }
+</script>

@@ -1,0 +1,50 @@
+﻿@model List<ChatApp.Models.UserModel>
+@{
+    Layout = null;
+}
+<div class="jumbotron defaultPanel">
+    <h4>Search Result</h4>
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="list-group table-of-contents">
+                @if (Model != null && Model.Count > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <li class="list-group-item">
+                            <a class="normal-link" href="/User/Profile/@item.UserID">
+                                <img src="@item.ProfilePicture" class="profilePictureCircle" />&nbsp;&nbsp;&nbsp;
+                                @item.Name
+                            </a>
+                            @if (item.IsRequestReceived)
+                            {
+                                <span class="pull-right">
+                                    <input type="button" class="btn btn-success btn-sm request-response" data-user-id="@item.UserID" data-value="Accepted" value="Accept" />
+                                    <input type="button" class="btn btn-danger btn-sm request-response" data-user-id="@item.UserID" data-value="Rejected" value="Reject" />
+                                </span>
+
+                            }
+                            else if (item.FriendRequestStatus == "Sent")
+                            {
+                                <input type="button" class="btn btn-info disabled btn-sm pull-right" value="Request Sent" />
+                            }
+                            else
+                            {
+                                <input type="button" class="btn btn-info pull-right btn-sm sendRequest" data-user-id="@item.UserID" value="Request to be friends" />
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <a href="javascript:;" class="list-group-item">
+                        No result found...
+                    </a>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+</script>

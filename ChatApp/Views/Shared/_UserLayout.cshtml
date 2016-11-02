@@ -1,0 +1,208 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Chat</title>
+    <link href="~/Content/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/css/custom.min.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrapValidator.min.css" rel="stylesheet" />
+    <link href="~/Content/css/common.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <script src="~/Scripts/jquery-2.2.4.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrapValidator.min.js"></script>
+    <script src="~/Scripts/common.js"></script>
+
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Chat</a>
+                <button data-target="#navbar-main" data-toggle="collapse" type="button" class="navbar-toggle">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div id="navbar-main" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav"></ul>
+                <form class="navbar-form navbar-left" style="margin-left:25%;" action="javascript:;" onsubmit="searchFriends()" role="search">
+                    <div class="form-group">
+                        <input class="form-control" placeholder="Type something" id="txtSearch" type="text">
+                    </div>
+                    <input type="button" value="Search" id="btnSearch" class="btn btn-default" />
+                </form>
+                <ul class="nav navbar-nav navbar-right" style="font-size:17px;">
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle btn-show-notification" data-toggle="dropdown" style=" height: 59px;padding-top: 15px;">
+                            <i class="fa fa-bell"></i>
+                            <span class="badge badge-important user-notification-count"></span>
+                        </a>
+                        <div class="dropdown-menu div-notification-top" style="padding: 15px; padding-bottom: 0px; width: 320px;">
+
+                        </div>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <img src="@MySession.Current.ProfilePicture" class="profilePictureCircle imgUserProfilePicture" />&nbsp;&nbsp;&nbsp;
+                            @MySession.Current.Name
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a style="font-size:15px;" href="/User/Profile">Profile</a></li>
+                            <li><a style="font-size:15px;" href="/User/Friends">Friends</a></li>
+                            <li><a style="font-size:15px;" href="/Account/Logout">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div id="banner" class="page-header">
+            <div class="row">
+                <div class="col-sm-9">
+                    <div id="divBody">
+                        @RenderBody()
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Recent Chats</h3>
+                        </div>
+                        <div class="panel-body left-chat-panel">
+                            <div class="list-group recent-chats">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Online Friends</h3>
+                        </div>
+                        <div class="panel-body left-chat-panel-bottom">
+                            <div class="list-group online-friends">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="new-notificaion-window">
+        @*<div class="alert alert-dismissible alert-info divNotification">
+                <button type="button" class="close btnCloseNotification">&times;</button>
+                <span id="spnNotificationMessage">
+                    <a href="/User/Profile/@MySession.Current.UserID">
+                        <img src="@MySession.Current.ProfilePicture" class="profilePictureCircle" />&nbsp;&nbsp;&nbsp;
+                        Testing Name
+                    </a>
+                    <br />
+                    <span class="pull-right">
+                        <span style="font-size:12px;">Friend Request</span> &nbsp;&nbsp;
+                        <input type="button" class="btn btn-success btn-xs" value="Accept" />
+                        <input type="button" class="btn btn-danger btn-xs" value="Reject" />
+                    </span>
+                    <br />
+                </span>
+            </div>
+            <div class="alert alert-dismissible alert-info divNotification">
+                <button type="button" class="close btnCloseNotification">&times;</button>
+                <span id="spnNotificationMessage">
+                    <a href="/User/Profile/@MySession.Current.UserID">
+                        <img src="@MySession.Current.ProfilePicture" class="profilePictureCircle" />&nbsp;&nbsp;&nbsp;
+                        Testing Name
+                    </a>
+                    <br />
+                    <span class="pull-right"><span style="font-size:12px;">Accepted your request</span></span>
+                    <br />
+                </span>
+            </div>*@
+    </div>
+</body>
+</html>
+<input type="hidden" id="hdfLoggedInUserID" value="@MySession.Current.UserID" />
+<input type="hidden" id="hdfLoggedInUserName" value="@MySession.Current.Name" />
+<input type="hidden" id="hdfLoggedInUserProfilePicture" value="@MySession.Current.ProfilePicture" />
+<input type="hidden" id="hdfWindowIsActiveOrNot" value="True" />
+<input type="hidden" id="hdfPendingMessageID"/>
+<script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script src="~/signalr/hubs"></script>
+<script src="~/Scripts/chat.app.js"></script>
+<script type="text/javascript">
+    $('#btnSearch').click(function () {
+        searchFriends();
+    });
+    //$('.dropdown-menu').click(function () {
+    //    return false;
+    //});
+    $('.btn-show-notification').click(function () {
+        $('.div-notification-top').load('/User/_UserNotifications', function () {
+
+        });
+    })
+    $(document).on("click", 'input[class$="btnCloseNotification"]', function () {
+        $(this).parent(".divNotification").animate({ "opacity": "hide", top: "100" }, 500);
+    });
+    $(document).on("click", 'input[class$="sendRequest"]', function () {
+        var userID = $(this).attr('data-user-id');
+        var loggedInUserID = $('#hdfLoggedInUserID').val();
+        sendFriendRequest(userID, loggedInUserID);
+        $(this).removeClass('sendRequest').addClass('disabled').val('Request Sent');
+    });
+    $(document).on("click", 'input[class$="request-response"]', function () {
+        var userid = $(this).attr('data-user-id');
+        var requestResponse = $(this).attr('data-value');
+        sendResponseToRequest(userid, requestResponse, $('#hdfLoggedInUserID').val());
+        $(this).val(requestResponse);
+        $(this).addClass('disabled');
+        $(this).siblings().addClass('disabled');
+    });
+    $(document).on('click', '.divNotificationPopup', function () {
+        var status = $(this).attr('data-status');
+        if (status != "Read") {
+            $(this).attr('data-status', 'Read');
+            var notificationID = $(this).attr('data-notificationID');
+            changeUserNotificationStatus(notificationID);
+        }
+    });
+    $(document).on('click', '.btn-send-chat-message', function () {
+        sendChatMessage();
+    });
+    $(document).on('keypress', '.txt-chat-message', function (e) {
+        if (e.which == 13) {
+            sendChatMessage();
+        }
+        else {
+            sendUserTypingStatus();
+        }
+    });
+    $(document).on('click', '.chat-user', function () {
+        $(this).siblings('a').removeClass('active');
+        $(this).addClass('active');
+        var userID = $(this).attr('data-user-id');
+        initiateChat(userID);
+    });
+    function searchFriends() {
+        var searchText = $('#txtSearch').val();
+        if (searchText != null && searchText != '') {
+            $("#divBody").html('');
+            $("#divBody").load('/User/_UserSearchResult?name=' + searchText + '', function () {
+
+            });
+            $("#divBody").animate({ "opacity": "show", top: "100" }, 500);
+        }
+        else {
+            $("#divBody").animate({ "opacity": "hide", top: "100" }, 500);
+        }
+    }
+</script>

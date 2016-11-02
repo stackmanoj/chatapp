@@ -1,0 +1,83 @@
+﻿@model ChatApp.Models.ChatMessageModel
+@{
+    ViewBag.Title = "Messages";
+    Layout = null;
+}
+<input type="hidden" class="hdf-current-chat-user-id" value="@Model.UserDetail.UserID" />
+<input type="hidden" class="hdf-current-chat-user-name" value="@Model.UserDetail.Name" />
+<input type="hidden" class="hdf-current-chat-user-profile-picture" value="@Model.UserDetail.ProfilePicture" />
+<input type="hidden" class="hdf-last-chat-message-id" value="@Model.LastChatMessageId" />
+<input type="hidden" class="hdf-old-messages-exist" value="@(Model.ChatMessages.Count < 20 ? "False" : "True")" />
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            <a style="font-size:15px;" href="/User/Profile/@Model.UserDetail.UserID">@Model.UserDetail.Name</a>
+            <span class="pull-right">
+                @if (Model.IsOnline)
+                {
+                    <span class="spn-chat-user-online-status"><i class="fa fa-circle online-circle chat-user-online-status"></i>Online</span>
+                }
+                else
+                {
+                    <span class="spn-chat-user-online-status">Last seen : @Model.LastSeen</span>
+                }
+            </span>
+        </h3>
+    </div>
+    <div class="panel-body right-chat-panel">
+        <ul class="chat">
+            @foreach (var item in Model.ChatMessages)
+            {
+                if (item.FromUserID == MySession.Current.UserID)
+                {
+                    <li class="right" data-chat-message-id="@item.ChatMessageID">
+                        <img src="@MySession.Current.ProfilePicture" alt="@MySession.Current.Name" class="avatar">
+                        <span class="message">
+                            <span class="arrow"></span>
+                            <span class="from">@MySession.Current.Name</span>
+                            <span class="time">@item.CreatedOn</span>
+                            <span data-chat-message-id="@item.ChatMessageID" class="chat-message-status">@item.Status</span>
+                            <br />
+                            <span class="text">
+                                @item.Message
+                            </span>
+                        </span>
+                    </li>
+                }
+                else
+                {
+                    <li class="left" data-chat-message-id="@item.ChatMessageID">
+                        <img src="@Model.UserDetail.ProfilePicture" alt="@Model.UserDetail.Name" class="avatar">
+                        <span class="message">
+                            <span class="arrow"></span>
+                            <span class="from">@Model.UserDetail.Name</span>
+                            <span class="time">@item.CreatedOn</span>
+                            <br />
+                            <span class="text">
+                                @item.Message
+                            </span>
+                        </span>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+    <div class="chat-user-status"></div>
+    <div>
+        <div class="input-group">
+            <input class="form-control txt-chat-message" type="text">
+            <span class="input-group-btn">
+                <button class="btn btn-primary btn-send-chat-message" type="button">Send</button>
+            </span>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).find("div.right-chat-panel").animate({ scrollTop: $(document).find("div.right-chat-panel")[0].scrollHeight }, 0);
+    $(document).find('.right-chat-panel').scroll(function () {
+        var div = $(this);
+        if (div.scrollTop() == 0) {
+            GetOldMessages();
+        }
+    });
+</script>

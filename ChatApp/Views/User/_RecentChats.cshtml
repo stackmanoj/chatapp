@@ -1,0 +1,21 @@
+﻿@model List<ChatApp.Models.UserModel>
+@{
+    Layout = null;
+}
+@if (Model != null)
+{
+    if (Model.Count > 0)
+    {
+        foreach (var item in Model)
+        {
+            string name = item.Name.IndexOf(" ") > 0 ? item.Name.Substring(0, item.Name.IndexOf(" ")) : item.Name;
+            <a href="javascript:;" data-user-id="@item.UserID" class="list-group-item chat-user">
+                <img src="@item.ProfilePicture" class="profilePictureCircle @(item.IsOnline ? "online-user-profile-pic" : "")" />&nbsp;&nbsp;&nbsp;@name<span class="custom-badge chat-message-count @(string.IsNullOrEmpty(item.UnReadMessages)?"hide":"")" data-user-id="@item.UserID">@item.UnReadMessages</span>
+            </a>
+        }
+    }
+    else
+    {
+        <span class="no-recent-chats">No recent chats</span>
+    }
+}

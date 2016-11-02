@@ -1,0 +1,54 @@
+﻿@model List<ChatApp.Models.UserNotificationModel>
+@{
+    Layout = null;
+    int totalNotifications = 0;
+}
+<form>
+    @if (Model != null)
+    {
+        if (Model.Count > 0)
+        {
+            totalNotifications = Model.Select(m => m.TotalNotifications).FirstOrDefault();
+            <input type="hidden" id="hdfNotificationIdsInWindow" value="@(string.Join(",",Model.Where(m=>m.NotificationStatus=="New").Select(m=>m.NotificationID).ToArray()))" />
+            foreach (var item in Model)
+            {
+                <div class="alert alert-dismissible alert-info divNotification" data-notificationid="@item.NotificationID">
+                    <span id="spnNotificationMessage">
+                        <a href="/User/Profile/@item.User.UserID">
+                            <img src="@item.User.ProfilePicture" class="profilePictureCircle" />&nbsp;&nbsp;&nbsp;
+                            @item.User.Name
+                        </a>
+                        <br />
+                        @if (item.NotificationType == "FriendRequest")
+                        {
+                            <span class="pull-right">
+                                <span style="font-size:11px;">Friend Request</span> &nbsp;&nbsp;
+                                <input type="button" class="btn btn-success btn-xs request-response" data-user-id="@item.User.UserID" data-value="Accepted" value="Accept" />
+                                &nbsp;&nbsp;
+                                <input type="button" class="btn btn-danger btn-xs request-response" data-user-id="@item.User.UserID" data-value="Rejected" value="Reject" />
+                            </span>
+                        }
+                        else if (item.NotificationType == "FriendRequestAccepted")
+                        {
+                            <span class="pull-right">
+                                <span style="font-size:12px;">Accepted your request</span>
+                            </span>
+                        }
+                        <br />
+                    </span>
+                </div>
+
+            }
+            if (totalNotifications > 3)
+            {
+                <a href="#" class="btn btn-link pull-right">Show All Notifications</a>
+            }
+        }
+    }
+</form>
+<script type="text/javascript">
+    var ids = $('#hdfNotificationIdsInWindow').val()
+    if (ids != null && ids != '' && ids != undefined) {
+        changeUserNotificationStatus(ids);
+    }
+</script>

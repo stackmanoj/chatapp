@@ -1,0 +1,37 @@
+﻿@model List<ChatApp.Models.UserModel>
+@{
+    ViewBag.Title = "Friends";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            Friend List
+        </h3>
+    </div>
+    <div class="panel-body friends-panel">
+        <ul class="list-group user-friends">
+            @if (Model != null)
+            {
+                if (Model.Count > 0)
+                {
+                    foreach (var item in Model)
+                    {
+                        <li class="list-group-item" data-user-id="@item.UserID">
+                            <a class="normal-link" href="/User/Profile/@item.UserID"><img src="@item.ProfilePicture" class="profilePictureCircle @(item.IsOnline ? "online-user-profile-pic" : "")" />&nbsp;&nbsp;&nbsp;@item.Name</a>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li>No Friends</li>
+                }
+            }
+            else
+            {
+                <li>No Friends</li>
+            }
+        </ul>
+    </div>
+</div>

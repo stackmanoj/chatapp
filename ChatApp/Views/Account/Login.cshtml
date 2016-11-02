@@ -1,0 +1,152 @@
+﻿@model ChatApp.Models.UserModel
+@{
+    ViewBag.Title = "Login / Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="jumbotron defaultPanel" style="display:none">
+    <h1>Jumbotron</h1>
+    <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <p><a class="btn btn-primary btn-lg">Learn more</a></p>
+</div>
+<div class="jumbotron loginPanel" style="display:none">
+    <form class="form-horizontal" action="/Account/Login" method="post" id="frmLogin">
+        <input type="hidden" name="FormType" value="Login" />
+        <fieldset>
+            <legend>Login</legend>
+            @if (!string.IsNullOrEmpty(Model.LoginError))
+            {
+                <div class="form-group">
+                    <label for="inputEmail" class="col-lg-2 control-label"></label>
+                    <div class="col-lg-4">
+                        <div class="alert alert-dismissible alert-danger">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            @Model.LoginError
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label for="inputEmail" class="col-lg-2 control-label">User Name</label>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @placeholder = "User Name", @data_bv_notempty = "" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                <div class="col-lg-4">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Password", @data_bv_notempty = "" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<div class="jumbotron signUpPanel" style="display:none">
+    <form class="form-horizontal" action="/Account/Login" method="post" id="frmSignUp">
+        <input type="hidden" name="FormType" value="SignUp" />
+        <fieldset>
+            <legend>Sign Up</legend>
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <div class="form-group">
+                    <label for="inputEmail" class="col-lg-2 control-label"></label>
+                    <div class="col-lg-4">
+                        <div class="alert alert-dismissible alert-danger">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            @Model.Error
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label for="inputEmail" class="col-lg-2 control-label">Name</label>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", @placeholder = "Name", @data_bv_notempty = "" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" class="col-lg-2 control-label">DOB</label>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(m => m.DOB, new { @class = "form-control", @placeholder = "MM/dd/yyyy", @data_bv_notempty = "", @data_bv_date="", @data_bv_date_format="MM/DD/YYYY" ,@data_bv_date_message="DOB is not valid" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" class="col-lg-2 control-label">Gender</label>
+                <div class="col-lg-4" style=" margin-top: 7px;">
+                    @Html.RadioButtonFor(m => m.Gender, "Male", new { @data_bv_notempty=""}) Male
+                    @Html.RadioButtonFor(m => m.Gender, "Female") Female
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" class="col-lg-2 control-label">User Name</label>
+                <div class="col-lg-4">
+                    @Html.TextBoxFor(m => m.UserName1, new { @class = "form-control", @placeholder = "User name", @data_bv_notempty = "" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+                <div class="col-lg-4">
+                    @Html.PasswordFor(m => m.Password1, new { @class = "form-control", @placeholder = "Password", @data_bv_notempty = "" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<script type="text/javascript">
+    validateForm("#frmLogin");
+    validateForm("#frmSignUp");
+    $('#btnLogin').click(function () {
+        $(".jumbotron").animate({ "opacity": "hide", top: "100" }, 500);
+        $(".loginPanel").animate({ "opacity": "show", top: "100" }, 500);
+    });
+    $('#btnSignUp').click(function () {
+        $(".jumbotron").animate({ "opacity": "hide", top: "100" }, 500);
+        $(".signUpPanel").animate({ "opacity": "show", top: "100" }, 500);
+    });
+    var from = '@TempData["ReturnFrom"]'
+    if (from == "Login") {
+        $('#btnLogin').click();
+    }
+    else if (from == "SignUp") {
+        $('#btnSignUp').click();
+    }
+    else {
+        $(".defaultPanel").animate({ "opacity": "show", top: "100" }, 500);
+    }
+</script>
+@*<h2>
+        Login
+    </h2>
+    <form method="post" action="/Account/CreateLogin">
+        @Html.AntiForgeryToken()
+
+        @Html.TextBoxFor(m => m.UserName, new { @class = "input input-search", @placeholder = "User Name" })
+
+        @Html.PasswordFor(m => m.Password, new { @class = "input input-search", @placeholder = "Password" })
+
+        @Html.DisplayFor(m => m.LoginError, new { })
+
+        <input type="submit" style="display:none" />
+    </form>
+    <h2>
+        Register
+    </h2>
+    <form method="post" action="/Account/Register">
+
+        @Html.TextBoxFor(m => m.Name, new { @class = "input input-search", @placeholder = "Name" })
+
+        @Html.TextBoxFor(m => m.UserName1, new { @class = "input input-search", @placeholder = "User name" })
+        @Html.PasswordFor(m => m.Password1, new { @class = "input input-search", @placeholder = "Password" })
+        @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "input input-search", @placeholder = "Confirm Password" })
+        @Html.DisplayFor(m => m.Error, new { })
+        <input type="submit" style="display:none" />
+    </form>*@
