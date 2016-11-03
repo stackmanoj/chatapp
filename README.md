@@ -1,1 +1,1 @@
-"# chatapp" 
+Chat application with Signalr and MVC
