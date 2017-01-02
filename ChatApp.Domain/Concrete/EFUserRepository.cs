@@ -43,7 +43,7 @@ namespace ChatApp.Domain.Concrete
         }
         public void SaveUserOnlineStatus(OnlineUser objentity)
         {
-            var obj = _context.OnlineUsers.Where(m => m.UserID == objentity.UserID && m.IsActive == true).FirstOrDefault();
+            var obj = _context.OnlineUsers.Where(m => m.UserID == objentity.UserID && m.IsActive == true && m.ConnectionID == objentity.ConnectionID).FirstOrDefault();
             if (obj != null)
             {
                 obj.IsOnline = objentity.IsOnline;
@@ -59,9 +59,9 @@ namespace ChatApp.Domain.Concrete
             }
             _context.SaveChanges();
         }
-        public string GetUserConnectionID(int UserID)
+        public List<string> GetUserConnectionID(int UserID)
         {
-            var obj = _context.OnlineUsers.Where(m => m.UserID == UserID && m.IsActive == true && m.IsOnline == true).Select(m => m.ConnectionID).FirstOrDefault();
+            var obj = _context.OnlineUsers.Where(m => m.UserID == UserID && m.IsActive == true && m.IsOnline == true).Select(m => m.ConnectionID).ToList();
             return obj;
         }
         public List<string> GetUserConnectionID(int[] userIDs)
@@ -77,17 +77,22 @@ namespace ChatApp.Domain.Concrete
         public List<OnlineUserDetails> GetOnlineFriends(int userID)
         {
             int[] friends = GetFriendUserIds(userID);
-            var obj = (from u in _context.OnlineUsers
-                       join v in _context.Users on u.UserID equals v.UserID
-                       where u.IsOnline == true && friends.Contains(v.UserID)
+            var friendOnlineDetails = _context.OnlineUsers.Where(m => friends.Contains(m.UserID) && m.IsActive == true && m.IsOnline == true).ToList();
+            var obj = (from v in _context.Users
+                       where friends.Contains(v.UserID)
                        select new OnlineUserDetails
                        {
-                           UserID = u.UserID,
+                           UserID = v.UserID,
                            Name = v.Name,
-                           ConnectionID = u.ConnectionID,
                            ProfilePicture = v.ProfilePicture,
                            Gender = v.Gender
                        }).OrderBy(m => m.Name).ToList();
+            var onlineUserIds = friendOnlineDetails.Select(m => m.UserID).ToArray();
+            obj = obj.Where(m => onlineUserIds.Contains(m.UserID)).ToList();
+            obj.ForEach(m =>
+            {
+                m.ConnectionID = friendOnlineDetails.Where(x => x.UserID == m.UserID).Select(x => x.ConnectionID).ToList();
+            });
             return obj;
         }
         public User GetUserById(int userId)
@@ -295,9 +300,26 @@ namespace ChatApp.Domain.Concrete
             users = users.OrderBy(d => userIdsList.IndexOf(d.UserID)).ToList();
             return users;
         }
-        public OnlineUser GetUserOnlineStatus(int userID)
+        public OnlineUserDetails GetUserOnlineStatus(int userID)
         {
-            var obj = _context.OnlineUsers.Where(m => m.UserID == userID).FirstOrDefault();
+            OnlineUserDetails obj = new OnlineUserDetails();
+            obj.UserID = userID;
+            var objList = _context.OnlineUsers.Where(m => m.UserID == userID &&m.IsActive==true).ToList();
+            if (objList != null && objList.Count > 0)
+            {
+                obj.IsOnline = false;
+                var onlineConnections = objList.Where(m => m.IsOnline).ToList();
+                var offlineConnections = objList.Where(m => !m.IsOnline).ToList();
+                if (onlineConnections != null && onlineConnections.Count > 0)
+                {
+                    obj.IsOnline = true;
+                }
+                else if (offlineConnections != null && offlineConnections.Count > 0)
+                {
+                    obj.IsOnline = false;
+                    obj.LastUpdationTime = offlineConnections.OrderByDescending(m => m.UpdatedOn).Select(m => m.UpdatedOn).FirstOrDefault();
+                }
+            }
             return obj;
         }
         public void UpdateUserProfilePicture(int userID, string imagePath)

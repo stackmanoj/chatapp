@@ -39,7 +39,7 @@ namespace ChatApp.Common
         public void RefreshOnlineUsers(int userID)
         {
             var users = _UserRepo.GetOnlineFriends(userID);
-            RefreshOnlineUsersByConnectionIds(users.Select(m => m.ConnectionID).ToList(), userID);
+            RefreshOnlineUsersByConnectionIds(users.SelectMany(m => m.ConnectionID).ToList(), userID);
         }
         public void RefreshOnlineUsersByConnectionIds(List<string> connectionIds, int userID = 0)
         {
@@ -49,7 +49,7 @@ namespace ChatApp.Common
                 var onlineStatus = _UserRepo.GetUserOnlineStatus(userID);
                 if (onlineStatus != null)
                 {
-                    Clients.Clients(connectionIds).RefreshOnlineUserByUserID(userID, onlineStatus.IsOnline, Convert.ToString(onlineStatus.UpdatedOn));
+                    Clients.Clients(connectionIds).RefreshOnlineUserByUserID(userID, onlineStatus.IsOnline, Convert.ToString(onlineStatus.LastUpdationTime));
                 }
             }
         }
@@ -62,11 +62,11 @@ namespace ChatApp.Common
         {
             int notificationID = _UserRepo.SaveUserNotification(notificationType, fromUserID, toUserID);
             var connectionId = _UserRepo.GetUserConnectionID(toUserID);
-            if (!string.IsNullOrEmpty(connectionId))
+            if (connectionId != null && connectionId.Count() > 0)
             {
                 var userInfo = CommonFunctions.GetUserModel(fromUserID);
                 int notificationCounts = _UserRepo.GetUserNotificationCounts(toUserID);
-                Clients.Client(connectionId).ReceiveNotification(notificationType, userInfo, notificationID, notificationCounts);
+                Clients.Clients(connectionId).ReceiveNotification(notificationType, userInfo, notificationID, notificationCounts);
             }
         }
         public void SendResponseToRequest(int requestorID, string requestResponse, int endUserID)
@@ -74,10 +74,10 @@ namespace ChatApp.Common
             var notificationID = _UserRepo.ResponseToFriendRequest(requestorID, requestResponse, endUserID);
             if (notificationID > 0)
             {
-                string connectionId = _UserRepo.GetUserConnectionID(endUserID);
-                if (!string.IsNullOrEmpty(connectionId))
+                var connectionId = _UserRepo.GetUserConnectionID(endUserID);
+                if (connectionId != null && connectionId.Count() > 0)
                 {
-                    Clients.Client(connectionId).RemoveNotification(notificationID);
+                    Clients.Clients(connectionId).RemoveNotification(notificationID);
                 }
             }
             if (requestResponse == "Accepted")
@@ -90,10 +90,10 @@ namespace ChatApp.Common
         public void RefreshNotificationCounts(int toUserID)
         {
             var connectionId = _UserRepo.GetUserConnectionID(toUserID);
-            if (!string.IsNullOrEmpty(connectionId))
+            if (connectionId != null && connectionId.Count() > 0)
             {
                 int notificationCounts = _UserRepo.GetUserNotificationCounts(toUserID);
-                Clients.Client(connectionId).RefreshNotificationCounts(notificationCounts);
+                Clients.Clients(connectionId).RefreshNotificationCounts(notificationCounts);
             }
         }
         public void ChangeNotitficationStatus(string notificationIds, int toUserID)

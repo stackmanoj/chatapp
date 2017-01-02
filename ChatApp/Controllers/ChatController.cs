@@ -30,7 +30,7 @@ namespace ChatApp.Controllers
             if (onlineStatus != null)
             {
                 objmodel.IsOnline = onlineStatus.IsOnline;
-                objmodel.LastSeen = Convert.ToString(onlineStatus.UpdatedOn);
+                objmodel.LastSeen = Convert.ToString(onlineStatus.LastUpdationTime);
             }
             return View(objmodel);
         }

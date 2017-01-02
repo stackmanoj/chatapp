@@ -13,7 +13,7 @@ namespace ChatApp.Domain.Abstract
         Tuple<User, string> SaveUser(User objentity);
         User CheckLogin(string userName, string password);
         void SaveUserOnlineStatus(OnlineUser objentity);
-        string GetUserConnectionID(int UserID);
+        List<string> GetUserConnectionID(int UserID);
         List<string> GetUserConnectionID(int[] userIDs);
         List<User> GetAllUsers();
         List<OnlineUserDetails> GetOnlineFriends(int userID);
@@ -31,7 +31,7 @@ namespace ChatApp.Domain.Abstract
         FriendMapping RemoveFriendMapping(int friendMappingID);
         List<User> GetUsersByLinqQuery(Expression<Func<User, bool>> where);
         List<OnlineUserDetails> GetRecentChats(int currentUserID);
-        OnlineUser GetUserOnlineStatus(int userID);
+        OnlineUserDetails GetUserOnlineStatus(int userID);
         void UpdateUserProfilePicture(int userID, string imagePath);
         void SaveUserImage(int userID, string imagePath, bool isProfilePicture);
         List<OnlineUserDetails> GetFriends(int userID);
