@@ -36,6 +36,17 @@ namespace ChatApp.Common
             }
             return base.OnDisconnected(stopCalled);
         }
+        public List<string> GetActiveConnectionIds(List<string> connectionIds)
+        {
+            var heartBeat = GlobalHost.DependencyResolver.Resolve<ITransportHeartbeat>();
+            var connections = heartBeat.GetConnections();
+            if (connections != null && connectionIds != null)
+            {
+                var filterdConnectionIds = connections.Where(m => connectionIds.Contains(m.ConnectionId)).Select(m => m.ConnectionId).ToList();
+                return filterdConnectionIds;
+            }
+            return connectionIds;
+        }
         public void RefreshOnlineUsers(int userID)
         {
             var users = _UserRepo.GetOnlineFriends(userID);
