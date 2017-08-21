@@ -89,6 +89,7 @@ $.connection.transports.longPolling.supportsKeepAlive = function () {
     return false;
 }
 $.connection.hub.qs = "UserID=" + $('#hdfLoggedInUserID').val();
+//$.connection.hub.start({ transport: ['longPolling', 'webSockets'], waitForPageLoad: false }).done(function () {
 $.connection.hub.start().done(function () {
     refreshUserNotificationCounts($('#hdfLoggedInUserID').val());
     refreshOnlineUsers();
