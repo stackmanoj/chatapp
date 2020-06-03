@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Web;
 using ChatApp.Domain.Entity;
 using ChatApp.Domain.Abstract;
+using Microsoft.AspNet.SignalR.Transports;
+
 namespace ChatApp.Common
 {
     public class ChatHub : Hub

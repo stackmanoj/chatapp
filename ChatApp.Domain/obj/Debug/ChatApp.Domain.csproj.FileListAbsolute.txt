@@ -13,3 +13,10 @@ D:\Manoj\Sample_Projects\ChatApp\ChatApp.Domain\bin\Debug\ChatApp.Domain.dll
 D:\Manoj\Sample_Projects\ChatApp\ChatApp.Domain\bin\Debug\ChatApp.Domain.pdb
 D:\Manoj\Sample_Projects\ChatApp\ChatApp.Domain\obj\Debug\ChatApp.Domain.dll
 D:\Manoj\Sample_Projects\ChatApp\ChatApp.Domain\obj\Debug\ChatApp.Domain.pdb
+F:\Projects\chatapp\ChatApp.Domain\bin\Debug\ChatApp.Domain.dll
+F:\Projects\chatapp\ChatApp.Domain\bin\Debug\ChatApp.Domain.pdb
+F:\Projects\chatapp\ChatApp.Domain\obj\Debug\ChatApp.Domain.csprojAssemblyReference.cache
+F:\Projects\chatapp\ChatApp.Domain\obj\Debug\ChatApp.Domain.csproj.CoreCompileInputs.cache
+F:\Projects\chatapp\ChatApp.Domain\obj\Debug\ChatApp.Domain.csproj.CopyComplete
+F:\Projects\chatapp\ChatApp.Domain\obj\Debug\ChatApp.Domain.dll
+F:\Projects\chatapp\ChatApp.Domain\obj\Debug\ChatApp.Domain.pdb
