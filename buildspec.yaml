@@ -14,3 +14,4 @@ phases:
 artifacts:
   name: beta
   base-directory: .\ChatApp\*
+
