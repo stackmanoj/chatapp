@@ -13,7 +13,7 @@ phases:
       
 artifacts:
   name: beta
-  base-directory: .\ChatApp\*
+  base-directory: .\ChatApp
   files:
     - **/*
 
