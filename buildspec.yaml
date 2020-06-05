@@ -15,5 +15,5 @@ artifacts:
   name: beta
   base-directory: .\ChatApp
   files:
-    - **/*
+    - '**/*'
 
