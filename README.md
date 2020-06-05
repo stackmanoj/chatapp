@@ -5,4 +5,3 @@ In this application I want to show how to chatting in asp.net using SignalR. The
 ## How to create database
 
 When you put a valid connection string of empty database in web config then it will create whole database automatically while first database connection.
-
